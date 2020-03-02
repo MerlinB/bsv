@@ -5,7 +5,7 @@
   "author": "Ryan X. Charles <ryan@moneybutton.com>",
   "main": "index.js",
   "scripts": {
-    "lint": "standard",
+    "lint": "standard && eslint lib",
     "test": "standard && mocha",
     "test-browser": "mochify --transform brfs test/*.js test/**/*.js test/**/**/*.js",
     "coverage": "nyc --reporter=text npm run test",
@@ -53,6 +53,7 @@
   "devDependencies": {
     "brfs": "2.0.1",
     "chai": "4.2.0",
+    "eslint": "^6.8.0",
     "mocha": "^5.2.0",
     "mochify": "^6.6.0",
     "nyc": "^14.1.1",
