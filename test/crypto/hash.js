@@ -21,9 +21,9 @@ describe('Hash', function () {
     })
   })
 
-  describe('#sha256', function () {
+  describe('#sha256', async function () {
     it('calculates the hash of this buffer correctly', function () {
-      var hash = Hash.sha256(buf)
+      var hash = await Hash.sha256(buf)
       hash.toString('hex').should.equal('6f2c7b22fd1626998287b3636089087961091de80311b9279c4033ec678a83e8')
     })
 
@@ -58,9 +58,9 @@ describe('Hash', function () {
     })
   })
 
-  describe('#sha256sha256', function () {
+  describe('#sha256sha256', async function () {
     it('calculates the hash of this buffer correctly', function () {
-      var hash = Hash.sha256sha256(buf)
+      var hash = await Hash.sha256sha256(buf)
       hash.toString('hex').should.equal('be586c8b20dee549bdd66018c7a79e2b67bb88b7c7d428fa4c970976d2bec5ba')
     })
 
