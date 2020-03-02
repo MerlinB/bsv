@@ -341,8 +341,8 @@ describe('Interpreter', function () {
     CheckBinaryOpMagnetic([], b, Opcode.OP_MUL, [])
   }
 
-  const CheckBinaryOpMagnetic = function (a, b, op, expected) {
-    const interp = evaluateScript(a, b, op)
+  const CheckBinaryOpMagnetic = async function (a, b, op, expected) {
+    const interp = await evaluateScript(a, b, op)
     const result = [...interp.stack.pop()]
     result.should.to.deep.equal(expected)
   }
@@ -356,14 +356,14 @@ describe('Interpreter', function () {
     return Interpreter._minimallyEncode(copy)
   }
 
-  const evaluateScript = function (arraySig, arrayPubKey, op, funcDebug) {
+  const evaluateScript = async function (arraySig, arrayPubKey, op, funcDebug) {
     const interp = new Interpreter()
     interp.stepListener = funcDebug
     interp.script = new Script().add(Buffer.from(arraySig)).add(Buffer.from(arrayPubKey))
     interp.script.add(op)
     interp.flags = Interpreter.SCRIPT_VERIFY_P2SH |
       Interpreter.SCRIPT_ENABLE_MAGNETIC_OPCODES | Interpreter.SCRIPT_ENABLE_MONOLITH_OPCODES
-    interp.evaluate()
+    await interp.evaluate()
     return interp
   }
 
@@ -424,167 +424,167 @@ describe('Interpreter', function () {
   })
 
   describe('#OP_LSHIFT tests from bitcoind', function () {
-    it('should not shift when no n value', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [], Opcode.OP_LSHIFT)
+    it('should not shift when no n value', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [], Opcode.OP_LSHIFT)
       console.log(interp.script)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('10011111000100011111010101010101'))
     })
-    it('should shift left 1', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x01], Opcode.OP_LSHIFT)
+    it('should shift left 1', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x01], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00111110001000111110101010101010'))
     })
-    it('should shift left 2', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x02], Opcode.OP_LSHIFT)
+    it('should shift left 2', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x02], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('01111100010001111101010101010100'))
     })
-    it('should shift left 3', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x03], Opcode.OP_LSHIFT)
+    it('should shift left 3', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x03], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('11111000100011111010101010101000'))
     })
-    it('should shift left 4', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x04], Opcode.OP_LSHIFT)
+    it('should shift left 4', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x04], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('11110001000111110101010101010000'))
     })
-    it('should shift left 5', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x05], Opcode.OP_LSHIFT)
+    it('should shift left 5', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x05], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('11100010001111101010101010100000'))
     })
-    it('should shift left 6', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x06], Opcode.OP_LSHIFT)
+    it('should shift left 6', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x06], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('11000100011111010101010101000000'))
     })
-    it('should shift left 7', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x07], Opcode.OP_LSHIFT)
+    it('should shift left 7', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x07], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('10001000111110101010101010000000'))
     })
-    it('should shift left 08', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x08], Opcode.OP_LSHIFT)
+    it('should shift left 08', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x08], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00010001111101010101010100000000'))
     })
-    it('should shift left 9', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x09], Opcode.OP_LSHIFT)
+    it('should shift left 9', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x09], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00100011111010101010101000000000'))
     })
-    it('should shift left 0A', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0A], Opcode.OP_LSHIFT)
+    it('should shift left 0A', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0A], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('01000111110101010101010000000000'))
     })
-    it('should shift left 0B', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0B], Opcode.OP_LSHIFT)
+    it('should shift left 0B', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0B], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('10001111101010101010100000000000'))
     })
-    it('should shift left 0C', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0C], Opcode.OP_LSHIFT)
+    it('should shift left 0C', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0C], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00011111010101010101000000000000'))
     })
-    it('should shift left 0D', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0D], Opcode.OP_LSHIFT)
+    it('should shift left 0D', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0D], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00111110101010101010000000000000'))
     })
-    it('should shift left 0E', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0E], Opcode.OP_LSHIFT)
+    it('should shift left 0E', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0E], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('01111101010101010100000000000000'))
     })
-    it('should shift left 0F', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0F], Opcode.OP_LSHIFT)
+    it('should shift left 0F', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0F], Opcode.OP_LSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('11111010101010101000000000000000'))
     })
   })
 
   describe('#OP_RSHIFT tests from bitcoind', function () {
-    it('should not shift when no n value', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [], Opcode.OP_RSHIFT)
+    it('should not shift when no n value', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('10011111000100011111010101010101'))
     })
-    it('should shift right 1', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x01], Opcode.OP_RSHIFT)
+    it('should shift right 1', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x01], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('01001111100010001111101010101010'))
     })
-    it('should shift right 2', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x02], Opcode.OP_RSHIFT)
+    it('should shift right 2', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x02], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00100111110001000111110101010101'))
     })
-    it('should shift right 3', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x03], Opcode.OP_RSHIFT)
+    it('should shift right 3', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x03], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00010011111000100011111010101010'))
     })
-    it('should shift right 4', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x04], Opcode.OP_RSHIFT)
+    it('should shift right 4', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x04], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00001001111100010001111101010101'))
     })
-    it('should shift right 5', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x05], Opcode.OP_RSHIFT)
+    it('should shift right 5', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x05], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000100111110001000111110101010'))
     })
-    it('should shift right 6', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x06], Opcode.OP_RSHIFT)
+    it('should shift right 6', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x06], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000010011111000100011111010101'))
     })
-    it('should shift right 7', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x07], Opcode.OP_RSHIFT)
+    it('should shift right 7', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x07], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000001001111100010001111101010'))
     })
-    it('should shift right 08', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x08], Opcode.OP_RSHIFT)
+    it('should shift right 08', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x08], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000000100111110001000111110101'))
     })
-    it('should shift right 9', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x09], Opcode.OP_RSHIFT)
+    it('should shift right 9', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x09], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000000010011111000100011111010'))
     })
-    it('should shift right 0A', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0A], Opcode.OP_RSHIFT)
+    it('should shift right 0A', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0A], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000000001001111100010001111101'))
     })
-    it('should shift right 0B', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0B], Opcode.OP_RSHIFT)
+    it('should shift right 0B', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0B], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000000000100111110001000111110'))
     })
-    it('should shift right 0C', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0C], Opcode.OP_RSHIFT)
+    it('should shift right 0C', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0C], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000000000010011111000100011111'))
     })
-    it('should shift right 0D', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0D], Opcode.OP_RSHIFT)
+    it('should shift right 0D', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0D], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000000000001001111100010001111'))
     })
-    it('should shift right 0E', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0E], Opcode.OP_RSHIFT)
+    it('should shift right 0E', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0E], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000000000000100111110001000111'))
     })
-    it('should shift right 0F', function () {
-      const interp = evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0F], Opcode.OP_RSHIFT)
+    it('should shift right 0F', async function () {
+      const interp = await evaluateScript([0x9F, 0x11, 0xF5, 0x55], [0x0F], Opcode.OP_RSHIFT)
       const result = interp.stack.pop()
       result.toString('hex').should.equal(toBitpattern('00000000000000010011111000100011'))
     })

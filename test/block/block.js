@@ -216,23 +216,23 @@ describe('Block', function () {
   })
 
   describe('#merkleRoot', function () {
-    it('should describe as valid merkle root', function () {
+    it('should describe as valid merkle root', async function () {
       var x = Block.fromRawBlock(dataRawBlockBinary)
-      var valid = x.validMerkleRoot()
+      var valid = await x.validMerkleRoot()
       valid.should.equal(true)
     })
 
-    it('should describe as invalid merkle root', function () {
+    it('should describe as invalid merkle root', async function () {
       var x = Block.fromRawBlock(dataRawBlockBinary)
       x.transactions.push(new Transaction())
-      var valid = x.validMerkleRoot()
+      var valid = await x.validMerkleRoot()
       valid.should.equal(false)
     })
 
-    it('should get a null hash merkle root', function () {
+    it('should get a null hash merkle root', async function () {
       var x = Block.fromRawBlock(dataRawBlockBinary)
       x.transactions = [] // empty the txs
-      var mr = x.getMerkleRoot()
+      var mr = await x.getMerkleRoot()
       mr.should.deep.equal(Block.Values.NULL_HASH)
     })
   })
