@@ -1,0 +1,3 @@
+[submodule "wasm/bitcoin-ts-secp256k1"]
+	path = wasm/bitcoin-ts-secp256k1
+	url = https://github.com/bitauth/bitcoin-ts-secp256k1

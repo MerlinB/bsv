@@ -3,7 +3,7 @@
 var bsv = module.exports
 
 // module information
-bsv.version = 'v' + require('./package.json').version
+bsv.version = 'v' + require('../package.json').version
 bsv.versionGuard = function (version) {
   if (version !== undefined) {
     var message = `

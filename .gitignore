@@ -15,4 +15,6 @@ report
 .DS_Store
 
 **/*.min.js
+/dist/
+/build/
 .nyc_output
