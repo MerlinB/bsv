@@ -24,7 +24,7 @@ describe('Message', async function () {
   var signature = Signature.fromCompact(Buffer.from(signatureString, 'base64'))
   var badSignature = Signature.fromCompact(Buffer.from(badSignatureString, 'base64'))
 
-  var publicKey = privateKey.toPublicKey()
+  var publicKey = await privateKey.toPublicKey()
 
   it('will error with incorrect message type', function () {
     expect(function () {
@@ -40,28 +40,28 @@ describe('Message', async function () {
   var signature2
   var signature3
 
-  it('can sign a message', function () {
+  it('can sign a message', async function () {
     var message2 = new Message(text)
-    signature2 = message2._sign(privateKey)
-    signature3 = Message(text).sign(privateKey)
+    signature2 = await message2._sign(privateKey)
+    signature3 = await Message(text).sign(privateKey)
     should.exist(signature2)
     should.exist(signature3)
   })
 
-  it('can sign a message (buffer representation of utf-8 string)', function () {
+  it('can sign a message (buffer representation of utf-8 string)', async function () {
     var messageBuf = new Message(textBuffer)
-    var signatureBuffer1 = messageBuf.sign(privateKey)
-    var signatureBuffer2 = Message(textBuffer).sign(privateKey)
+    var signatureBuffer1 = await messageBuf.sign(privateKey)
+    var signatureBuffer2 = await Message(textBuffer).sign(privateKey)
     should.exist(signatureBuffer1)
     should.exist(signatureBuffer2)
     var verified = messageBuf.verify(address, signatureBuffer1.toString()) && messageBuf.verify(address, signatureBuffer2.toString())
     verified.should.equal(true)
   })
 
-  it('can sign a message (buffer representation of arbitrary data)', function () {
+  it('can sign a message (buffer representation of arbitrary data)', async function () {
     var messageBuf = new Message(bufferData)
-    var signatureBuffer1 = messageBuf.sign(privateKey)
-    var signatureBuffer2 = Message(bufferData).sign(privateKey)
+    var signatureBuffer1 = await messageBuf.sign(privateKey)
+    var signatureBuffer2 = await Message(bufferData).sign(privateKey)
     should.exist(signatureBuffer1)
     should.exist(signatureBuffer2)
     var verified = messageBuf.verify(address, signatureBuffer1.toString()) && messageBuf.verify(address, signatureBuffer2.toString())
@@ -69,7 +69,7 @@ describe('Message', async function () {
   })
 
   it('sign will error with incorrect private key argument', function () {
-    expect(function () {
+    expect(async function () {
       var message3 = new Message(text)
       return message3.sign('not a private key')
     }).to.throw('First argument should be an instance of PrivateKey')
@@ -125,7 +125,7 @@ describe('Message', async function () {
   it('will verify with an uncompressed pubkey', async function () {
     var privateKey = await new bsv.PrivateKey('5KYZdUEo39z3FPrtuX2QbbwGnNP5zTd7yyr2SC1j299sBCnWjss').initialized
     var message = new Message('This is an example of a signed message.')
-    var signature = message.sign(privateKey)
+    var signature = await message.sign(privateKey)
     var verified = message.verify(privateKey.toAddress(), signature)
     verified.should.equal(true)
   })
@@ -140,7 +140,7 @@ describe('Message', async function () {
       var privateKey = await PrivateKey.fromString('L3nrwRssVKMkScjejmmu6kmq4hSuUApJnFdW1hGvBP69jnQuKYCh').initialized
       var address = privateKey.toAddress()
       var message = 'this is the message that I want to sign'
-      var sig = Message.sign(message, privateKey)
+      var sig = await Message.sign(message, privateKey)
       sig.toString().should.equal('II5uoh3m0yQ+/5va+1acFQhPaEdTnFFiG/PiKpoC+kpgHbmIk3aWHQ6tyPGgNCUmKlSfwzcP6qVAxuUt0PwDzpg=')
       var verify = Message.verify(message, address, sig)
       verify.should.equal(true)
