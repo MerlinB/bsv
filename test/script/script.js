@@ -1012,24 +1012,24 @@ describe('Script', function () {
     })
   })
   describe('#buildScriptHashOut', function () {
-    it('should create script from another script', function () {
+    it('should create script from another script', async function () {
       var inner = new Script('OP_DUP OP_HASH160 20 0x06c06f6d931d7bfba2b5bd5ad0d19a8f257af3e3 OP_EQUALVERIFY OP_CHECKSIG')
-      var s = Script.buildScriptHashOut(inner)
+      var s = await Script.buildScriptHashOut(inner)
       should.exist(s)
       s.toString().should.equal('OP_HASH160 20 0x45ea3f9133e7b1cef30ba606f8433f993e41e159 OP_EQUAL')
       s.isScriptHashOut().should.equal(true)
     })
 
-    it('inherits network property from other script', function () {
+    it('inherits network property from other script', async function () {
       var s1 = Script.fromAddress(new Address('1FSMWkjVPAxzUNjbxT52p3mVKC971rfW3S'))
-      var s2 = Script.buildScriptHashOut(s1)
+      var s2 = await Script.buildScriptHashOut(s1)
       should.exist(s1._network)
       s1._network.should.equal(s2._network)
     })
 
-    it('inherits network property form an address', function () {
+    it('inherits network property form an address', async function () {
       var address = new Address('34Nn91aTGaULqWsZiunrBPHzFBDrZ3B8XS')
-      var script = Script.buildScriptHashOut(address)
+      var script = await Script.buildScriptHashOut(address)
       should.exist(script._network)
       script._network.should.equal(address.network)
     })
