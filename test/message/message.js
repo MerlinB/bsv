@@ -1,8 +1,10 @@
 'use strict'
 
 var chai = require('chai')
+var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect
 var should = chai.should()
+chai.use(chaiAsPromised);
 
 var bsv = require('../../')
 var Address = bsv.Address
@@ -54,7 +56,7 @@ describe('Message', async function () {
     var signatureBuffer2 = await Message(textBuffer).sign(privateKey)
     should.exist(signatureBuffer1)
     should.exist(signatureBuffer2)
-    var verified = messageBuf.verify(address, signatureBuffer1.toString()) && messageBuf.verify(address, signatureBuffer2.toString())
+    var verified = (await messageBuf.verify(address, signatureBuffer1.toString())) && (await messageBuf.verify(address, signatureBuffer2.toString()))
     verified.should.equal(true)
   })
 
@@ -64,7 +66,7 @@ describe('Message', async function () {
     var signatureBuffer2 = await Message(bufferData).sign(privateKey)
     should.exist(signatureBuffer1)
     should.exist(signatureBuffer2)
-    var verified = messageBuf.verify(address, signatureBuffer1.toString()) && messageBuf.verify(address, signatureBuffer2.toString())
+    var verified = (await messageBuf.verify(address, signatureBuffer1.toString())) && (await messageBuf.verify(address, signatureBuffer2.toString()))
     verified.should.equal(true)
   })
 
@@ -72,52 +74,52 @@ describe('Message', async function () {
     expect(async function () {
       var message3 = new Message(text)
       return message3.sign('not a private key')
-    }).to.throw('First argument should be an instance of PrivateKey')
+    }()).to.be.rejectedWith('First argument should be an instance of PrivateKey')
   })
 
-  it('can verify a message with signature', function () {
+  it('can verify a message with signature', async function () {
     var message4 = new Message(text)
-    var verified = message4._verify(publicKey, signature2)
+    var verified = await message4._verify(publicKey, signature2)
     verified.should.equal(true)
   })
 
-  it('can verify a message with existing signature', function () {
+  it('can verify a message with existing signature', async function () {
     var message5 = new Message(text)
-    var verified = message5._verify(publicKey, signature)
+    var verified = await message5._verify(publicKey, signature)
     verified.should.equal(true)
   })
 
   it('verify will error with incorrect public key argument', function () {
-    expect(function () {
+    expect(async function () {
       var message6 = new Message(text)
       return message6._verify('not a public key', signature)
-    }).to.throw('First argument should be an instance of PublicKey')
+    }()).to.be.rejectedWith('First argument should be an instance of PublicKey')
   })
 
   it('verify will error with incorrect signature argument', function () {
-    expect(function () {
+    expect(async function () {
       var message7 = new Message(text)
       return message7._verify(publicKey, 'not a signature')
-    }).to.throw('Second argument should be an instance of Signature')
+    }()).to.be.rejectedWith('Second argument should be an instance of Signature')
   })
 
-  it('verify will correctly identify a bad signature', function () {
+  it('verify will correctly identify a bad signature', async function () {
     var message8 = new Message(text)
-    var verified = message8._verify(publicKey, badSignature)
+    var verified = await message8._verify(publicKey, badSignature)
     should.exist(message8.error)
     verified.should.equal(false)
   })
 
-  it('can verify a message with address and generated signature string', function () {
+  it('can verify a message with address and generated signature string', async function () {
     var message9 = new Message(text)
-    var verified = message9.verify(address, signature3)
+    var verified = await message9.verify(address, signature3)
     should.not.exist(message9.error)
     verified.should.equal(true)
   })
 
-  it('will not verify with address mismatch', function () {
+  it('will not verify with address mismatch', async function () {
     var message10 = new Message(text)
-    var verified = message10.verify(badAddress, signatureString)
+    var verified = await message10.verify(badAddress, signatureString)
     should.exist(message10.error)
     verified.should.equal(false)
   })
@@ -126,12 +128,12 @@ describe('Message', async function () {
     var privateKey = await new bsv.PrivateKey('5KYZdUEo39z3FPrtuX2QbbwGnNP5zTd7yyr2SC1j299sBCnWjss').initialized
     var message = new Message('This is an example of a signed message.')
     var signature = await message.sign(privateKey)
-    var verified = message.verify(privateKey.toAddress(), signature)
+    var verified = await message.verify(privateKey.toAddress(), signature)
     verified.should.equal(true)
   })
 
-  it('can chain methods', function () {
-    var verified = Message(text).verify(address, signatureString)
+  it('can chain methods', async function () {
+    var verified = await Message(text).verify(address, signatureString)
     verified.should.equal(true)
   })
 
@@ -142,7 +144,7 @@ describe('Message', async function () {
       var message = 'this is the message that I want to sign'
       var sig = await Message.sign(message, privateKey)
       sig.toString().should.equal('II5uoh3m0yQ+/5va+1acFQhPaEdTnFFiG/PiKpoC+kpgHbmIk3aWHQ6tyPGgNCUmKlSfwzcP6qVAxuUt0PwDzpg=')
-      var verify = Message.verify(message, address, sig)
+      var verify = await Message.verify(message, address, sig)
       verify.should.equal(true)
     })
   })
@@ -182,8 +184,8 @@ describe('Message', async function () {
     })
   })
 
-  it('accepts Address for verification', function () {
-    var verified = Message(text)
+  it('accepts Address for verification', async function () {
+    var verified = await Message(text)
       .verify(new Address(address), signatureString)
     verified.should.equal(true)
   })

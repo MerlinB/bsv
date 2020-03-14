@@ -441,7 +441,7 @@ describe('Address', function () {
       })
       it('returns the same address if the script is a pay to script hash out', async function () {
         var address = '3BYmEwgV2vANrmfRymr1mFnHXgLjD6gAWm'
-        var script = Script.buildScriptHashOut(new Address(address))
+        var script = await Script.buildScriptHashOut(new Address(address))
         var addr = await Address(script, Networks.livenet).initialized
         addr.toString().should.equal(address)
       })
